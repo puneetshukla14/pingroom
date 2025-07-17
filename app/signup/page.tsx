@@ -19,11 +19,19 @@ export default function SignupPage() {
 
   return (
     <form onSubmit={handleSubmit}>
+        <p style={{ marginTop: '1rem' }}>
+  Already have an account?{' '}
+  <a href="/login" style={{ color: 'blue', textDecoration: 'underline' }}>
+    Login
+  </a>
+</p>
+
       <h2>Signup</h2>
       <input placeholder="Name" onChange={e => setForm({ ...form, name: e.target.value })} />
       <input type="email" placeholder="Email" onChange={e => setForm({ ...form, email: e.target.value })} />
       <input type="password" placeholder="Password" onChange={e => setForm({ ...form, password: e.target.value })} />
       <button type="submit">Create Account</button>
     </form>
+    
   );
 }

@@ -1,31 +1,57 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(form),
-    });
-
-    if (res.ok) {
-      const { token } = await res.json();
-      localStorage.setItem('token', token);
+    try {
+      const res = await axios.post('/api/auth/login', form);
+      localStorage.setItem('token', res.data.token);
       router.push('/dashboard');
-    } else alert('Login failed');
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Login failed');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <main style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto' }}>
       <h2>Login</h2>
-      <input type="email" placeholder="Email" onChange={e => setForm({ ...form, email: e.target.value })} />
-      <input type="password" placeholder="Password" onChange={e => setForm({ ...form, password: e.target.value })} />
-      <button type="submit">Login</button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          required
+        />
+        <br />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+        <br />
+        <button type="submit">Login</button>
+      </form>
+      <p style={{ marginTop: '1rem' }}>
+        Don't have an account?{' '}
+        <a href="/signup" style={{ color: 'blue', textDecoration: 'underline' }}>
+          Sign up
+        </a>
+      </p>
+    </main>
   );
 }
