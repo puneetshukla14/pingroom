@@ -1,14 +1,28 @@
+// lib/db.ts
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+const MONGODB_URI = process.env.MONGODB_URI || '';
 
-export const connectDB = async () => {
-  if (mongoose.connections[0].readyState) return;
+if (!MONGODB_URI) {
+  throw new Error('Please define the MONGODB_URI environment variable');
+}
 
-  try {
-    await mongoose.connect(MONGODB_URI);
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection error', err);
+let cached = global.mongoose || { conn: null, promise: null };
+
+async function connectDB() {
+  if (cached.conn) return cached.conn;
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      dbName: 'chat-app',
+      bufferCommands: false,
+    }).then((mongoose) => {
+      return mongoose;
+    });
   }
-};
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+export default connectDB;

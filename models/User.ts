@@ -1,8 +1,16 @@
-import mongoose from 'mongoose';
+// models/User.ts
+import mongoose, { Schema, models, model } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-});
+const UserSchema = new Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    email: { type: String },
+    password: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-export const User = mongoose.models.User || mongoose.model('User', userSchema);
+// Avoid overwrite errors in dev
+const User = models.User || model('User', UserSchema);
+
+export default User;
