@@ -1,15 +1,17 @@
 'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
     });
 
@@ -18,20 +20,34 @@ export default function SignupPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-        <p style={{ marginTop: '1rem' }}>
-  Already have an account?{' '}
-  <a href="/login" style={{ color: 'blue', textDecoration: 'underline' }}>
-    Login
-  </a>
-</p>
-
+    <main style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto' }}>
       <h2>Signup</h2>
-      <input placeholder="Name" onChange={e => setForm({ ...form, name: e.target.value })} />
-      <input type="email" placeholder="Email" onChange={e => setForm({ ...form, email: e.target.value })} />
-      <input type="password" placeholder="Password" onChange={e => setForm({ ...form, password: e.target.value })} />
-      <button type="submit">Create Account</button>
-    </form>
-    
+      <form onSubmit={handleSubmit}>
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          required
+        />
+        <br />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
+        <br />
+        <button type="submit">Create Account</button>
+      </form>
+      <p style={{ marginTop: '1rem' }}>
+        Already have an account?{' '}
+        <a href="/login" style={{ color: 'blue', textDecoration: 'underline' }}>
+          Login
+        </a>
+      </p>
+    </main>
   );
 }
