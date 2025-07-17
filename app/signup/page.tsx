@@ -15,7 +15,7 @@ export default function SignupPage() {
       body: JSON.stringify(form),
     });
 
-    if (res.ok) router.push('/login');
+    if (res.ok) router.push('/page');
     else alert('Signup failed');
   };
 
