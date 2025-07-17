@@ -4,30 +4,24 @@ import { User } from '@/models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+const JWT_SECRET = process.env.JWT_SECRET as string;
+
 export async function POST(req: NextRequest) {
   await connectDB();
 
-  const { email, password } = await req.json();
+  const { username, password } = await req.json();
 
-  if (!email || !password) {
-    return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
-  }
-
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ username });
   if (!user) {
-    return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });
   }
 
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
-  if (!isPasswordCorrect) {
-    return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });
   }
 
-  const token = jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.JWT_SECRET || 'your_secret_key',
-    { expiresIn: '7d' }
-  );
+  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
   return NextResponse.json({ token }, { status: 200 });
 }
