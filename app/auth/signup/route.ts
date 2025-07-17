@@ -6,26 +6,21 @@ import bcrypt from 'bcryptjs';
 export async function POST(req: NextRequest) {
   await connectDB();
 
-  const { name, email, password } = await req.json();
+  const { username, password } = await req.json();
 
-  if (!name || !email || !password) {
-    return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
+  if (!username || !password) {
+    return NextResponse.json({ message: 'Username and password are required' }, { status: 400 });
   }
 
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ username });
   if (existingUser) {
     return NextResponse.json({ message: 'User already exists' }, { status: 409 });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = new User({
-    name,
-    email,
-    password: hashedPassword,
-  });
-
-  await newUser.save();
+  const user = new User({ username, password: hashedPassword });
+  await user.save();
 
   return NextResponse.json({ message: 'Signup successful' }, { status: 201 });
 }
