@@ -1,27 +1,18 @@
+// app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '@/lib/db';
-import { User } from '@/models/User';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export async function POST(req: NextRequest) {
-  await connectDB();
+  const body = await req.json();
+  const { username, password } = body;
 
-  const { username, password } = await req.json();
-
-  const user = await User.findOne({ username });
-  if (!user) {
-    return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });
+  if (!username || !password) {
+    return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return NextResponse.json({ message: 'Invalid username or password' }, { status: 401 });
+  // Dummy logic — Replace with real DB lookup
+  if (username === 'admin' && password === 'admin') {
+    return NextResponse.json({ token: 'fake-jwt-token' });
   }
 
-  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
-
-  return NextResponse.json({ token }, { status: 200 });
+  return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
 }
