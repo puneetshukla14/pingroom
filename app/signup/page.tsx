@@ -29,14 +29,14 @@ export default function SignupPage() {
     }
 
     try {
-      const res = await fetch('/auth/signup', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
       if (res.ok) {
-        router.push('/page');
+        router.push('/setup-profile');
       } else {
         setError('Signup failed. Try a different username.');
       }
@@ -60,32 +60,60 @@ export default function SignupPage() {
           Join a clean, fast chat platform. Built for real conversations—no distractions.
         </p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          {['Username', 'Email', 'Password', 'Confirm Password'].map((label) => {
-            const key = label.toLowerCase().replace(' ', '') as keyof typeof form;
-            const isPassword = label.toLowerCase().includes('password');
+<form onSubmit={handleSubmit} style={styles.form}>
+  <div style={styles.inputGroup}>
+    <label style={styles.label}>Username</label>
+    <input
+      type="text"
+      placeholder="Username"
+      value={form.username}
+      onChange={(e) => setForm({ ...form, username: e.target.value })}
+      style={styles.input}
+      required
+    />
+  </div>
 
-            return (
-              <div key={label} style={styles.inputGroup}>
-                <label style={styles.label}>{label}</label>
-                <input
-                  type={isPassword ? 'password' : key === 'email' ? 'email' : 'text'}
-                  placeholder={label}
-                  value={form[key]}
-                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  style={styles.input}
-                  required
-                />
-              </div>
-            );
-          })}
+  <div style={styles.inputGroup}>
+    <label style={styles.label}>Email (optional)</label>
+    <input
+      type="email"
+      placeholder="Email"
+      value={form.email ?? ''}
+      onChange={(e) => setForm({ ...form, email: e.target.value })}
+      style={styles.input}
+    />
+  </div>
 
-          {error && <p style={styles.error}>{error}</p>}
+  <div style={styles.inputGroup}>
+    <label style={styles.label}>Password</label>
+    <input
+      type="password"
+      placeholder="Password"
+      value={form.password}
+      onChange={(e) => setForm({ ...form, password: e.target.value })}
+      style={styles.input}
+      required
+    />
+  </div>
 
-          <button type="submit" style={styles.button}>
-            Sign Up
-          </button>
-        </form>
+  <div style={styles.inputGroup}>
+    <label style={styles.label}>Confirm Password</label>
+    <input
+      type="password"
+      placeholder="Confirm Password"
+      value={form.confirmPassword}
+      onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+      style={styles.input}
+      required
+    />
+  </div>
+
+  {error && <p style={styles.error}>{error}</p>}
+
+  <button type="submit" style={styles.button}>
+    Sign Up
+  </button>
+</form>
 
         <p style={styles.footerText}>
           Already have an account?{' '}
