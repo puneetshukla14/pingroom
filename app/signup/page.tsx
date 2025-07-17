@@ -56,12 +56,15 @@ export default function SignupPage() {
     >
       <div style={styles.card}>
         <h1 style={styles.title}>Create Your Account</h1>
-        <p style={styles.subtitle}>Join the chat. Start connecting instantly.</p>
+        <p style={styles.subtitle}>
+          Join a clean, fast chat platform. Built for real conversations—no distractions.
+        </p>
 
         <form onSubmit={handleSubmit} style={styles.form}>
           {['Username', 'Email', 'Password', 'Confirm Password'].map((label) => {
             const key = label.toLowerCase().replace(' ', '') as keyof typeof form;
             const isPassword = label.toLowerCase().includes('password');
+
             return (
               <div key={label} style={styles.inputGroup}>
                 <label style={styles.label}>{label}</label>
@@ -87,7 +90,7 @@ export default function SignupPage() {
         <p style={styles.footerText}>
           Already have an account?{' '}
           <a href="/login" style={styles.link}>
-            Log in
+            Log in here and pick up where you left off.
           </a>
         </p>
       </div>
@@ -123,14 +126,15 @@ const styles = {
   },
   subtitle: {
     fontSize: '1rem',
-    color: '#666',
+    color: '#555',
     textAlign: 'center' as const,
-    marginBottom: '2rem',
+    marginBottom: '1.8rem',
+    lineHeight: '1.6',
   },
   form: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '1.5rem',
+    gap: '1.4rem',
   },
   inputGroup: {
     display: 'flex',
